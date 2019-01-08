@@ -10,66 +10,51 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class EchoClient {
-	private static final String SERVER_IP = "218.39.221.90";
-	private static final int SERVER_PORT = 6000;
+	private static final String SERVER_IP = "218.39.221.76";
+	private static final int SERVER_PORT = 5000;
 
 	public static void main(String[] args) {
-		Scanner scanner = null;
+		Scanner scanner = new Scanner(System.in);
+		
+		// 1. 소켓 생성
 		Socket socket = null;
 		
+		socket = new Socket();
+		
+		// 2. 서버와 연결
 		try {
-			//1. Scanner 생성(표준입력 연결)
-			scanner = new Scanner(System.in);
-			
-			//2. 소켓 생성
-			socket = new Socket();
-
-			//3. 서버 연결
 			socket.connect(new InetSocketAddress(SERVER_IP, SERVER_PORT));
-			log("connected");
-			
-			//4. IOStream 생성(받아오기)
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
+			PrintWriter pr = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 			
-			while(true) {
-				//5. 키보드 입력 받기
+			while (true) {
 				System.out.print(">>");
-				String line = scanner.nextLine();
-				if("quit".contentEquals(line)) {
+				String data = scanner.nextLine();
+				if("exit".equals(data)) {
 					break;
 				}
-				
-				//6. 데이터 쓰기(전송)
-				pw.println(line);
-				
-				//7. 데이터 읽기(수신)
-				String data = br.readLine();
-				if(data == null) {
-					log("closed by server");
-					break;
-				}
-				
-				//8. 콘솔 출력
-				System.out.println("<<" + data);
+				pr.println(data);
+				System.out.println("<<" + br.readLine());
 			}
 		} catch (IOException e) {
-			log("error:" + e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			try {
-				if(scanner != null) {
-					scanner.close();
-				}
 				if(socket != null && socket.isClosed() == false) {
-					socket.close();
+					socket.close();	
 				}
 			} catch (IOException e) {
-				log("error:" + e);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
 
-	private static void log(String log) {
-		System.out.println("[client] " + log);
-	}
 }

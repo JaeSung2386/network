@@ -5,34 +5,27 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class NSLookup {
-
 	public static void main(String[] args) {
-		Scanner scanner = null;
-		
-		try {
-			scanner = new Scanner(System.in);
-			
-			while(true) {
-				System.out.print(">>");
-				String line = scanner.nextLine();
-				
-				if("quit".equals(line)) {
-					break;
-				}
-				
-				InetAddress[] inetAddresses = InetAddress.getAllByName(line);
-				for(InetAddress inetAddress : inetAddresses) {
-					System.out.println(line + ":" + inetAddress.getHostAddress());;
-				}
+		Scanner scanner = new Scanner(System.in);
+		String dns = null;
+		while(true) {
+			System.out.print("> ");
+			dns = scanner.nextLine();
+			if("exit".equals(dns)) {
+				break;
 			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} finally {
-			if(scanner != null) {
-				scanner.close();
+			try {
+				InetAddress[] inetAddresses = InetAddress.getAllByName(dns);
+				for(int n = 0; n < inetAddresses.length; n++)
+					System.out.println(
+							inetAddresses[n].getHostName() + " : " +
+							inetAddresses[n].getHostAddress());
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				System.out.println(
+						dns+"을(를) 찾을 수 없습니다.");
 			}
 		}
 		
 	}
-
 }
